@@ -12,8 +12,8 @@ use crate::{
     exchange::{
         actions::{
             ApproveAgent, ApproveBuilderFee, BulkCancel, BulkModify, BulkOrder, ClaimRewards,
-            EvmUserModify, ScheduleCancel, SendAsset, SetReferrer, UpdateIsolatedMargin,
-            UpdateLeverage, UsdSend,
+            CreateVault, EvmUserModify, ScheduleCancel, SendAsset, SetReferrer,
+            UpdateIsolatedMargin, UpdateLeverage, UsdSend,
         },
         cancel::{CancelRequest, CancelRequestCloid, ClientCancelRequestCloid},
         modify::{ClientModifyRequest, ModifyRequest},
@@ -82,6 +82,7 @@ pub enum Actions {
     EvmUserModify(EvmUserModify),
     ScheduleCancel(ScheduleCancel),
     ClaimRewards(ClaimRewards),
+    CreateVault(CreateVault),
 }
 
 impl Actions {
@@ -159,14 +160,14 @@ impl ExchangeClient {
         };
         let res = serde_json::to_string(&exchange_payload)
             .map_err(|e| Error::JsonParse(e.to_string()))?;
-        debug!("Sending request {res:?}");
+        println!("Sending request {res:?}");
 
         let output = &self
             .http_client
             .post("/exchange", res)
             .await
             .map_err(|e| Error::JsonParse(e.to_string()))?;
-        debug!("Response: {output}");
+        println!("Response: {output}");
         serde_json::from_str(output).map_err(|e| Error::JsonParse(e.to_string()))
     }
 
@@ -880,6 +881,30 @@ impl ExchangeClient {
         let timestamp = next_nonce();
 
         let action = Actions::ClaimRewards(ClaimRewards {});
+        let connection_id = action.hash(timestamp, self.vault_address)?;
+        let action = serde_json::to_value(&action).map_err(|e| Error::JsonParse(e.to_string()))?;
+        let is_mainnet = self.http_client.is_mainnet();
+        let signature = sign_l1_action(wallet, connection_id, is_mainnet)?;
+
+        self.post(action, signature, timestamp).await
+    }
+
+    pub async fn create_vault(
+        &self,
+        name: &str,
+        description: &str,
+        initial_usd: u64,
+        wallet: Option<&PrivateKeySigner>,
+    ) -> Result<ExchangeResponseStatus> {
+        let wallet = wallet.unwrap_or(&self.wallet);
+        let timestamp = next_nonce();
+
+        let action = Actions::CreateVault(CreateVault {
+            name: name.to_string(),
+            description: description.to_string(),
+            initial_usd,
+            nonce: timestamp,
+        });
         let connection_id = action.hash(timestamp, self.vault_address)?;
         let action = serde_json::to_value(&action).map_err(|e| Error::JsonParse(e.to_string()))?;
         let is_mainnet = self.http_client.is_mainnet();

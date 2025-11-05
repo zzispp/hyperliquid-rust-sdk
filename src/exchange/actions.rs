@@ -275,6 +275,23 @@ pub struct ScheduleCancel {
 #[serde(rename_all = "camelCase")]
 pub struct ClaimRewards;
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateVault {
+    pub name: String,
+    pub description: String,
+    #[serde(serialize_with = "serialize_initial_usd")]
+    pub initial_usd: u64,
+    pub nonce: u64,
+}
+
+fn serialize_initial_usd<S>(val: &u64, s: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    s.serialize_u64(*val)
+}
+
 impl Eip712 for ApproveBuilderFee {
     fn domain(&self) -> Eip712Domain {
         eip_712_domain(self.signature_chain_id)
