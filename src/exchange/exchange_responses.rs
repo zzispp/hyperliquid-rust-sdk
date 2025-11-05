@@ -1,3 +1,4 @@
+use alloy::primitives::Address;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
@@ -41,5 +42,21 @@ pub struct ExchangeResponse {
 #[serde(tag = "status", content = "response")]
 pub enum ExchangeResponseStatus {
     Ok(ExchangeResponse),
+    Err(String),
+}
+
+// CreateVault 专用响应类型
+#[derive(Deserialize, Debug, Clone)]
+pub struct CreateVaultResponse {
+    #[serde(rename = "type")]
+    pub response_type: String,
+    pub data: Address,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "status", content = "response")]
+pub enum CreateVaultResponseStatus {
+    Ok(CreateVaultResponse),
     Err(String),
 }

@@ -1,5 +1,5 @@
 use alloy::signers::local::PrivateKeySigner;
-use hyperliquid_rust_sdk_extended::{BaseUrl, ExchangeClient, ExchangeResponseStatus};
+use hyperliquid_rust_sdk_extended::{BaseUrl, CreateVaultResponseStatus, ExchangeClient};
 use log::info;
 
 #[tokio::main]
@@ -8,7 +8,7 @@ async fn main() {
 
     // 使用提供的 agent API key
     let wallet: PrivateKeySigner =
-        "e908f86dbb4d55ac876378565aafeabc187f6690f046459397b17d9b9a19688e"
+        "0xa3d1b9e63d491a1b0da608175d36a8e643b755763e0f9296ab1ef7b281e792c2"
             .parse()
             .unwrap();
 
@@ -19,7 +19,7 @@ async fn main() {
     // 创建 Vault
     let name = "测试测试测试测试";
     let description = "测试测试测试测试测试测试测试测试";
-    let initial_usd = 400000000; // 400 million USD (in smallest units)
+    let initial_usd = 100000000; // 400 million USD (in smallest units)
 
     info!("Creating vault with name: {}", name);
     info!("Description: {}", description);
@@ -31,10 +31,12 @@ async fn main() {
         .unwrap();
 
     match response {
-        ExchangeResponseStatus::Ok(exchange_response) => {
-            info!("Vault created successfully: {:#?}", exchange_response);
+        CreateVaultResponseStatus::Ok(vault_response) => {
+            info!("Vault created successfully!");
+            info!("Vault address: {:?}", vault_response.data);
+            info!("Response type: {}", vault_response.response_type);
         }
-        ExchangeResponseStatus::Err(e) => {
+        CreateVaultResponseStatus::Err(e) => {
             info!("Error creating vault: {}", e);
         }
     }

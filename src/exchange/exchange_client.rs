@@ -26,8 +26,8 @@ use crate::{
     prelude::*,
     req::HttpClient,
     signature::{sign_l1_action, sign_typed_data},
-    BaseUrl, BulkCancelCloid, ClassTransfer, Error, ExchangeResponseStatus, SpotSend, SpotUser,
-    VaultTransfer, Withdraw3,
+    BaseUrl, BulkCancelCloid, ClassTransfer, CreateVaultResponseStatus, Error,
+    ExchangeResponseStatus, SpotSend, SpotUser, VaultTransfer, Withdraw3,
 };
 
 #[derive(Debug)]
@@ -146,12 +146,6 @@ impl ExchangeClient {
         signature: Signature,
         nonce: u64,
     ) -> Result<ExchangeResponseStatus> {
-        // let signature = ExchangeSignature {
-        //     r: signature.r(),
-        //     s: signature.s(),
-        //     v: 27 + signature.v() as u64,
-        // };
-
         let exchange_payload = ExchangePayload {
             action,
             signature,
@@ -160,14 +154,39 @@ impl ExchangeClient {
         };
         let res = serde_json::to_string(&exchange_payload)
             .map_err(|e| Error::JsonParse(e.to_string()))?;
-        println!("Sending request {res:?}");
+        debug!("Sending request {res:?}");
 
         let output = &self
             .http_client
             .post("/exchange", res)
             .await
             .map_err(|e| Error::JsonParse(e.to_string()))?;
-        println!("Response: {output}");
+        debug!("Response: {output}");
+        serde_json::from_str(output).map_err(|e| Error::JsonParse(e.to_string()))
+    }
+
+    async fn post_create_vault(
+        &self,
+        action: serde_json::Value,
+        signature: Signature,
+        nonce: u64,
+    ) -> Result<CreateVaultResponseStatus> {
+        let exchange_payload = ExchangePayload {
+            action,
+            signature,
+            nonce,
+            vault_address: self.vault_address,
+        };
+        let res = serde_json::to_string(&exchange_payload)
+            .map_err(|e| Error::JsonParse(e.to_string()))?;
+        debug!("Sending request {res:?}");
+
+        let output = &self
+            .http_client
+            .post("/exchange", res)
+            .await
+            .map_err(|e| Error::JsonParse(e.to_string()))?;
+        debug!("Response: {output}");
         serde_json::from_str(output).map_err(|e| Error::JsonParse(e.to_string()))
     }
 
@@ -895,7 +914,7 @@ impl ExchangeClient {
         description: &str,
         initial_usd: u64,
         wallet: Option<&PrivateKeySigner>,
-    ) -> Result<ExchangeResponseStatus> {
+    ) -> Result<CreateVaultResponseStatus> {
         let wallet = wallet.unwrap_or(&self.wallet);
         let timestamp = next_nonce();
 
@@ -910,7 +929,7 @@ impl ExchangeClient {
         let is_mainnet = self.http_client.is_mainnet();
         let signature = sign_l1_action(wallet, connection_id, is_mainnet)?;
 
-        self.post(action, signature, timestamp).await
+        self.post_create_vault(action, signature, timestamp).await
     }
 }
 
