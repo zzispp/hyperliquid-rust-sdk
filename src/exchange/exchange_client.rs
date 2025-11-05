@@ -485,6 +485,15 @@ impl ExchangeClient {
         orders: Vec<ClientOrderRequest>,
         wallet: Option<&PrivateKeySigner>,
     ) -> Result<ExchangeResponseStatus> {
+        self.bulk_order_with_grouping(orders, "na", wallet).await
+    }
+
+    pub async fn bulk_order_with_grouping(
+        &self,
+        orders: Vec<ClientOrderRequest>,
+        grouping: &str,
+        wallet: Option<&PrivateKeySigner>,
+    ) -> Result<ExchangeResponseStatus> {
         let wallet = wallet.unwrap_or(&self.wallet);
         let timestamp = next_nonce();
 
@@ -496,7 +505,7 @@ impl ExchangeClient {
 
         let action = Actions::Order(BulkOrder {
             orders: transformed_orders,
-            grouping: "na".to_string(),
+            grouping: grouping.to_string(),
             builder: None,
         });
         let connection_id = action.hash(timestamp, self.vault_address)?;
@@ -510,6 +519,17 @@ impl ExchangeClient {
     pub async fn bulk_order_with_builder(
         &self,
         orders: Vec<ClientOrderRequest>,
+        wallet: Option<&PrivateKeySigner>,
+        builder: BuilderInfo,
+    ) -> Result<ExchangeResponseStatus> {
+        self.bulk_order_with_builder_and_grouping(orders, "na", wallet, builder)
+            .await
+    }
+
+    pub async fn bulk_order_with_builder_and_grouping(
+        &self,
+        orders: Vec<ClientOrderRequest>,
+        grouping: &str,
         wallet: Option<&PrivateKeySigner>,
         mut builder: BuilderInfo,
     ) -> Result<ExchangeResponseStatus> {
@@ -526,7 +546,7 @@ impl ExchangeClient {
 
         let action = Actions::Order(BulkOrder {
             orders: transformed_orders,
-            grouping: "na".to_string(),
+            grouping: grouping.to_string(),
             builder: Some(builder),
         });
         let connection_id = action.hash(timestamp, self.vault_address)?;

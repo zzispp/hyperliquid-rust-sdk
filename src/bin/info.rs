@@ -1,5 +1,5 @@
 use alloy::primitives::Address;
-use hyperliquid_rust_sdk::{BaseUrl, InfoClient};
+use hyperliquid_rust_sdk_extended::{BaseUrl, InfoClient};
 use log::info;
 
 const ADDRESS: &str = "0xc64cc00b46101bd40aa1c3121195e85c0b0918d8";

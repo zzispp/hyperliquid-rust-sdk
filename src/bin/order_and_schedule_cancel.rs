@@ -1,7 +1,7 @@
 use alloy::signers::local::PrivateKeySigner;
 use log::info;
 
-use hyperliquid_rust_sdk::{
+use hyperliquid_rust_sdk_extended::{
     BaseUrl, ClientLimit, ClientOrder, ClientOrderRequest, ExchangeClient, ExchangeDataStatus,
     ExchangeResponseStatus,
 };

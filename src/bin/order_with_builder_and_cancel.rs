@@ -1,7 +1,7 @@
 use std::{thread::sleep, time::Duration};
 
 use alloy::signers::local::PrivateKeySigner;
-use hyperliquid_rust_sdk::{
+use hyperliquid_rust_sdk_extended::{
     BaseUrl, BuilderInfo, ClientCancelRequest, ClientLimit, ClientOrder, ClientOrderRequest,
     ExchangeClient, ExchangeDataStatus, ExchangeResponseStatus,
 };

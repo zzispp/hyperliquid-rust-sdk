@@ -1,6 +1,6 @@
-# hyperliquid-rust-sdk
+# hyperliquid-rust-sdk-extended
 
-SDK for Hyperliquid API trading with Rust.
+Extended SDK for Hyperliquid API trading with Rust.
 
 ## Usage Examples
 
@@ -8,19 +8,19 @@ See `src/bin` for examples. You can run any example with `cargo run --bin [EXAMP
 
 ## Installation
 
-`cargo add hyperliquid_rust_sdk`
+`cargo add hyperliquid_rust_sdk_extended`
 
 ## License
 
 This project is licensed under the terms of the `MIT` license. See [LICENSE](LICENSE.md) for more details.
 
 ```bibtex
-@misc{hyperliquid-rust-sdk,
-  author = {Hyperliquid},
-  title = {SDK for Hyperliquid API trading with Rust.},
-  year = {2024},
+@misc{hyperliquid-rust-sdk-extended,
+  author = {zzispp},
+  title = {Extended SDK for Hyperliquid API trading with Rust.},
+  year = {2025},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/hyperliquid-dex/hyperliquid-rust-sdk}}
+  howpublished = {\url{https://github.com/zzispp/hyperliquid-rust-sdk}}
 }
 ```

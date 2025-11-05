@@ -1,5 +1,5 @@
 use alloy::{primitives::address, signers::local::PrivateKeySigner};
-use hyperliquid_rust_sdk::{BaseUrl, ExchangeClient};
+use hyperliquid_rust_sdk_extended::{BaseUrl, ExchangeClient};
 use log::info;
 
 #[tokio::main]

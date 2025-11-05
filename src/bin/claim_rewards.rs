@@ -1,5 +1,5 @@
 use alloy::signers::local::PrivateKeySigner;
-use hyperliquid_rust_sdk::{BaseUrl, ExchangeClient, ExchangeResponseStatus};
+use hyperliquid_rust_sdk_extended::{BaseUrl, ExchangeClient, ExchangeResponseStatus};
 use log::info;
 
 #[tokio::main]
