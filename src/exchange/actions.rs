@@ -236,7 +236,7 @@ impl Eip712 for SendAsset {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct VaultTransfer {
-    pub vault_address: Address,
+    pub vault_address: String,
     pub is_deposit: bool,
     pub usd: u64,
 }

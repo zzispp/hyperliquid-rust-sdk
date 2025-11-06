@@ -318,7 +318,7 @@ impl ExchangeClient {
         let timestamp = next_nonce();
 
         let action = Actions::VaultTransfer(VaultTransfer {
-            vault_address,
+            vault_address: format!("{vault_address:#x}"),
             is_deposit,
             usd,
         });
