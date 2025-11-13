@@ -243,6 +243,14 @@ pub struct VaultTransfer {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct VaultModify {
+    pub vault_address: String,
+    pub allow_deposits: bool,
+    pub always_close_on_withdraw: Option<bool>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct SetReferrer {
     pub code: String,
 }
