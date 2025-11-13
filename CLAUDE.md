@@ -30,6 +30,7 @@ cargo run --bin ws_orders         # WebSocket 订单更新示例
 - 交易操作: `order_and_cancel.rs`, `market_order_and_cancel.rs`, `spot_order.rs`
 - WebSocket 订阅: `ws_orders.rs`, `ws_trades.rs`, `ws_l2_book.rs`, `ws_candles.rs`
 - 账户管理: `usdc_transfer.rs`, `class_transfer.rs`, `leverage.rs`
+- Vault 操作: `vault_transfer.rs`, `vault_modify.rs`, `vault_distribute.rs`
 - 高级功能: `market_maker.rs`, `agent.rs`, `approve_builder_fee.rs`
 
 ## 核心架构
@@ -44,8 +45,9 @@ cargo run --bin ws_orders         # WebSocket 订单更新示例
      - 订单操作: `order()`, `bulk_order()`, `cancel()`, `modify()`
      - 市价单: `market_open()`, `market_close()`
      - 账户管理: `usdc_transfer()`, `class_transfer()`, `vault_transfer()`
+     - Vault 管理: `vault_modify()`, `vault_distribute()`, `create_vault()`
      - 杠杆控制: `update_leverage()`, `update_isolated_margin()`
-     - 高级功能: `approve_agent()`, `approve_builder_fee()`, `create_vault()`
+     - 高级功能: `approve_agent()`, `approve_builder_fee()`
 
 2. **InfoClient** (`src/info/info_client.rs`)
    - 查询市场信息和账户状态

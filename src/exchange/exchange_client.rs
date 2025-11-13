@@ -27,7 +27,8 @@ use crate::{
     req::HttpClient,
     signature::{sign_l1_action, sign_typed_data},
     BaseUrl, BulkCancelCloid, ClassTransfer, CreateVaultResponseStatus, Error,
-    ExchangeResponseStatus, SpotSend, SpotUser, VaultModify, VaultTransfer, Withdraw3,
+    ExchangeResponseStatus, SpotSend, SpotUser, VaultDistribute, VaultModify, VaultTransfer,
+    Withdraw3,
 };
 
 #[derive(Debug)]
@@ -77,6 +78,7 @@ pub enum Actions {
     SendAsset(SendAsset),
     VaultTransfer(VaultTransfer),
     VaultModify(VaultModify),
+    VaultDistribute(VaultDistribute),
     SpotSend(SpotSend),
     SetReferrer(SetReferrer),
     ApproveBuilderFee(ApproveBuilderFee),
@@ -361,6 +363,34 @@ impl ExchangeClient {
             vault_address: format!("{vault_address:#x}"),
             allow_deposits,
             always_close_on_withdraw,
+        });
+        let connection_id = action.hash(timestamp, None)?;
+        let action = serde_json::to_value(&action).map_err(|e| Error::JsonParse(e.to_string()))?;
+        let is_mainnet = self.http_client.is_mainnet();
+        let signature = sign_l1_action(wallet, connection_id, is_mainnet)?;
+
+        // For vault creator actions, the outer vaultAddress should be None
+        self.post_with_vault_address(action, signature, timestamp, None)
+            .await
+    }
+
+    pub async fn vault_distribute(
+        &self,
+        usd: u64,
+        vault_address: Option<Address>,
+        wallet: Option<&PrivateKeySigner>,
+    ) -> Result<ExchangeResponseStatus> {
+        let vault_address = self
+            .vault_address
+            .or(vault_address)
+            .ok_or(Error::VaultAddressNotFound)?;
+        let wallet = wallet.unwrap_or(&self.wallet);
+
+        let timestamp = next_nonce();
+
+        let action = Actions::VaultDistribute(VaultDistribute {
+            vault_address: format!("{vault_address:#x}"),
+            usd,
         });
         let connection_id = action.hash(timestamp, None)?;
         let action = serde_json::to_value(&action).map_err(|e| Error::JsonParse(e.to_string()))?;

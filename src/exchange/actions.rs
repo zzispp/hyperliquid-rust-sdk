@@ -251,6 +251,13 @@ pub struct VaultModify {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct VaultDistribute {
+    pub vault_address: String,
+    pub usd: u64,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct SetReferrer {
     pub code: String,
 }
